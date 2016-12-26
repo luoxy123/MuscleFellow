@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using MuscleFellow.Data.Interfaces;
@@ -58,24 +59,34 @@ namespace MuscleFellow.API.Controllers
         public async Task<IActionResult> Register([FromBody] LoginAPIModel registerModel)
         {
             var user = new ApplicationUser { UserName = registerModel.UserID, Email = registerModel.UserID };
-            var result = await _userManager.CreateAsync(user, registerModel.Password);
-            if (result.Succeeded)
+            try
             {
-                await _signInManager.SignInAsync(user, isPersistent: true);
-                _logger.LogInformation(3, "User created a new account with password.");
-                return Ok();
-            }
+                var result = await _userManager.CreateAsync(user, registerModel.Password);
+                if (result.Succeeded)
+                {
+                    await _signInManager.SignInAsync(user, isPersistent: false);
+                    _logger.LogInformation(3, "User created a new account with password.");
+                    return Ok();
+                }
 
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            return Ok();
+          
             // If we got this far, something failed.
-            return ResponseHelper.Unauthorized();
+
+
         }
         // POST: /Account/Login
         [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] LoginAPIModel loginModel)
         {
-            Microsoft.AspNetCore.Identity.SignInResult result = await _signInManager.PasswordSignInAsync(
-                    loginModel.UserID, loginModel.Password, true, lockoutOnFailure: false);
+            var result = await _signInManager.PasswordSignInAsync(
+                    loginModel.UserID, loginModel.Password, true, false);
             if (result.Succeeded)
             {
                 _logger.LogInformation(1, "User logged in.");

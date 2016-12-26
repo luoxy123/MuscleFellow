@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using MuscleFellow.API.JWT;
 using Microsoft.Extensions.Options;
 
@@ -44,9 +45,38 @@ namespace MuscleFellow.API
             services.Configure<WebApiSettings>(settings => settings.HostName = Configuration["HostName"]);
             services.Configure<WebApiSettings>(settings => settings.SecretKey = Configuration["SecretKey"]);
 
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.Password.RequireDigit = true;
+                options.Password.RequiredLength = 6;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireLowercase = false;
+                
+                // Lockout settings
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
+                options.Lockout.MaxFailedAccessAttempts = 10;
+
+                // Cookie settings
+                options.Cookies.ApplicationCookie.ExpireTimeSpan = TimeSpan.FromDays(150);
+                options.Cookies.ApplicationCookie.LoginPath = "/Account/LogIn";
+                options.Cookies.ApplicationCookie.LogoutPath = "/Account/LogOff";
+
+                // User settings
+                options.User.RequireUniqueEmail = true;
+                
+            });
+
+
+
+            services.AddEntityFramework()
+                .AddDbContext<MuscleFellowDbContext>(options=>options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+
+
             // Add framework services.
-            services.AddDbContext<MuscleFellowDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            //services.AddDbContext<MuscleFellowDbContext>(options =>
+            //    options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<MuscleFellowDbContext>()
@@ -57,6 +87,9 @@ namespace MuscleFellow.API
 
             // Add session
             services.AddSession(options => options.IdleTimeout = TimeSpan.FromMinutes(20));
+
+
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -106,10 +139,29 @@ namespace MuscleFellow.API
                 AutomaticChallenge = true,
                 TokenValidationParameters = tokenValidationParameters
             });
+            
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute(
+                    name: "default",
+                    template: "api/{controller=values}/{action=get}/{id?}");
+            });
 
-
-            app.UseMvc();
             app.UseStaticFiles();
+
+            using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
+            {
+                var dbContext = serviceScope.ServiceProvider.GetService<MuscleFellowDbContext>();
+                bool HasCreated = dbContext.Database.EnsureCreated();
+                if (HasCreated)
+                {
+                    MuscleFellowSampleDataInitializer dbInitializer = new MuscleFellowSampleDataInitializer(dbContext);
+                    dbInitializer.LoadBasicInformationAsync().Wait();
+                    dbInitializer.LoadSampleDataAsync().Wait();
+                }
+
+            }
+
         }
         public IServiceCollection AddDependencies(IServiceCollection services)
         {

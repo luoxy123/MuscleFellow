@@ -1,0 +1,14 @@
+MuscleFellow.API/bin/
+MuscleFellow.Web/bin/MuscleFellow.API/obj/Debug/
+MuscleFellow.Web/bin/MuscleFellow.API/bin/Debug/
+MuscleFellow.Web/bin/MuscleFellow.Data/obj/
+MuscleFellow.Web/bin/Debug/netcoreapp1.0/
+MuscleFellow.Web/bin/MuscleFellow.Data/bin/
+MuscleFellow.Web/bin/MuscleFellow.Models/bin/
+MuscleFellow.Models/obj/
+MuscleFellow.Models/bin/Debug/netstandard1.5/
+MuscleFellow.Web/bin/MuscleFellow.Models/obj/
+MuscleFellow.Data/obj/
+MuscleFellow.Data/bin/
+MuscleFellow.Web/obj/
+MuscleFellow.API/obj/
