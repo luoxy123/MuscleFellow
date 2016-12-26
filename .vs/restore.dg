@@ -1,0 +1,11 @@
+#:D:\opensrc\MuscleFellow\MuscleFellow.Models\MuscleFellow.Models.xproj
+#:D:\opensrc\MuscleFellow\MuscleFellow.Data\MuscleFellow.Data.xproj
+D:\opensrc\MuscleFellow\MuscleFellow.Data\MuscleFellow.Data.xproj|D:\opensrc\MuscleFellow\MuscleFellow.Models\MuscleFellow.Models.xproj
+#:D:\opensrc\MuscleFellow\MuscleFellow.API\MuscleFellow.API.xproj
+D:\opensrc\MuscleFellow\MuscleFellow.API\MuscleFellow.API.xproj|D:\opensrc\MuscleFellow\MuscleFellow.Data\MuscleFellow.Data.xproj
+D:\opensrc\MuscleFellow\MuscleFellow.API\MuscleFellow.API.xproj|D:\opensrc\MuscleFellow\MuscleFellow.Models\MuscleFellow.Models.xproj
+D:\opensrc\MuscleFellow\MuscleFellow.Data\MuscleFellow.Data.xproj|D:\opensrc\MuscleFellow\MuscleFellow.Models\MuscleFellow.Models.xproj
+#:D:\opensrc\MuscleFellow\MuscleFellow.Web\MuscleFellow.Web.xproj
+D:\opensrc\MuscleFellow\MuscleFellow.Web\MuscleFellow.Web.xproj|D:\opensrc\MuscleFellow\MuscleFellow.Data\MuscleFellow.Data.xproj
+D:\opensrc\MuscleFellow\MuscleFellow.Web\MuscleFellow.Web.xproj|D:\opensrc\MuscleFellow\MuscleFellow.Models\MuscleFellow.Models.xproj
+D:\opensrc\MuscleFellow\MuscleFellow.Data\MuscleFellow.Data.xproj|D:\opensrc\MuscleFellow\MuscleFellow.Models\MuscleFellow.Models.xproj
