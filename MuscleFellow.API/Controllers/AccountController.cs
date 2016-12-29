@@ -43,8 +43,9 @@ namespace MuscleFellow.API.Controllers
             _logger = loggerFactory.CreateLogger<AccountController>();
             _settings = settings;
         }
+            
+
         [HttpGet]
-        [Authorize]
         public async Task<IActionResult> Get([FromQuery] string id)
         {
             if (string.IsNullOrWhiteSpace(id))
@@ -58,7 +59,7 @@ namespace MuscleFellow.API.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Register([FromBody] LoginAPIModel registerModel)
         {
-            var user = new ApplicationUser { UserName = registerModel.UserID, Email = registerModel.UserID };
+            var user = new ApplicationUser {UserName = registerModel.UserID, Email = registerModel.UserID};
             try
             {
                 var result = await _userManager.CreateAsync(user, registerModel.Password);
@@ -75,11 +76,11 @@ namespace MuscleFellow.API.Controllers
                 Console.WriteLine(e);
             }
             return Ok();
-          
+
             // If we got this far, something failed.
 
-
         }
+
         // POST: /Account/Login
         [HttpPost]
         [AllowAnonymous]
@@ -89,8 +90,8 @@ namespace MuscleFellow.API.Controllers
                     loginModel.UserID, loginModel.Password, true, false);
             if (result.Succeeded)
             {
+                await HttpContext.Authentication.SignInAsync("Cookie", User);
                 _logger.LogInformation(1, "User logged in.");
-
                 var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_settings.Value.SecretKey));
                 var options = new TokenProviderOptions
                 {
@@ -119,10 +120,11 @@ namespace MuscleFellow.API.Controllers
         }
         // POST: /Account/LogOff
         [HttpPost]
-        [Authorize]
+        [Authorize(ActiveAuthenticationSchemes = "Bearer")]
         public async Task<IActionResult> LogOff()
         {
             await _signInManager.SignOutAsync();
+            await HttpContext.Authentication.SignOutAsync("Cookie");
             _logger.LogInformation(4, "User logged out.");
             return Ok();
         }

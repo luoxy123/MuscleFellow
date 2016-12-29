@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using MuscleFellow.API.JWT;
 using Microsoft.Extensions.Options;
@@ -59,10 +60,9 @@ namespace MuscleFellow.API
 
                 // Cookie settings
                 options.Cookies.ApplicationCookie.ExpireTimeSpan = TimeSpan.FromDays(150);
-                options.Cookies.ApplicationCookie.LoginPath = "/Account/LogIn";
-                options.Cookies.ApplicationCookie.LogoutPath = "/Account/LogOff";
-
-                // User settings
+                //options.Cookies.ApplicationCookie.LoginPath = "/Account/LogIn";
+                //options.Cookies.ApplicationCookie.LogoutPath = "/Account/LogOff";
+                                // User settings
                 options.User.RequireUniqueEmail = true;
                 
             });
@@ -87,8 +87,7 @@ namespace MuscleFellow.API
 
             // Add session
             services.AddSession(options => options.IdleTimeout = TimeSpan.FromMinutes(20));
-
-
+            
             
         }
 
@@ -106,13 +105,27 @@ namespace MuscleFellow.API
             {
                 app.UseExceptionHandler("/Home/Error");
             }
-            // Add ASP.NET Core Identity
-            app.UseIdentity().UseCookieAuthentication(
-                new CookieAuthenticationOptions()
-                {
-                    AccessDeniedPath = new PathString("/api/v1/Account/Login"),
-                    LoginPath = new PathString("/api/v1/Account/Login")
-                });
+
+            
+
+            //Add ASP.NET Core Identity
+            //app.UseIdentity().UseCookieAuthentication(
+            //    new CookieAuthenticationOptions()
+            //    {
+            //        AuthenticationScheme = "Cookie",
+            //        AutomaticAuthenticate = false
+            //        //AccessDeniedPath = new PathString("/api/v1/Account/Login"),
+            //        //LoginPath = new PathString("/api/v1/Account/Login")
+                    
+            //    });
+
+            app.UseIdentity().UseCookieAuthentication(new CookieAuthenticationOptions()
+            {
+                AuthenticationScheme="Cookie",
+                AutomaticAuthenticate = false,
+                LoginPath = new PathString("/api/v1/Account/Login")
+
+            });
 
             // Add JWT　Protection
             var secretKey = Configuration["SecretKey"];
@@ -133,13 +146,17 @@ namespace MuscleFellow.API
                 // If you want to allow a certain amount of clock drift, set that here: 
                 ClockSkew = TimeSpan.Zero
             };
+
             app.UseJwtBearerAuthentication(new JwtBearerOptions
             {
-                AutomaticAuthenticate = true,
-                AutomaticChallenge = true,
-                TokenValidationParameters = tokenValidationParameters
+                AuthenticationScheme = "Bearer",
+                AutomaticAuthenticate = false,
+                AutomaticChallenge = false,
+                TokenValidationParameters = tokenValidationParameters,
+                
+                
             });
-            
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
@@ -148,20 +165,6 @@ namespace MuscleFellow.API
             });
 
             app.UseStaticFiles();
-
-            using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
-            {
-                var dbContext = serviceScope.ServiceProvider.GetService<MuscleFellowDbContext>();
-                bool HasCreated = dbContext.Database.EnsureCreated();
-                if (HasCreated)
-                {
-                    MuscleFellowSampleDataInitializer dbInitializer = new MuscleFellowSampleDataInitializer(dbContext);
-                    dbInitializer.LoadBasicInformationAsync().Wait();
-                    dbInitializer.LoadSampleDataAsync().Wait();
-                }
-
-            }
-
         }
         public IServiceCollection AddDependencies(IServiceCollection services)
         {

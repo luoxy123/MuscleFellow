@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MuscleFellow.API.Controllers
@@ -9,15 +10,17 @@ namespace MuscleFellow.API.Controllers
     [Route("api/[controller]")]
     public class ValuesController : Controller
     {
+
         // GET api/values
         [HttpGet]
         public IEnumerable<string> Get()
         {
             return new string[] { "value1", "value2" };
         }
-
+        
         // GET api/values/5
         [HttpGet("{id}")]
+        [Authorize(ActiveAuthenticationSchemes = "Bearer")]
         public string Get(int id)
         {
             return "value";

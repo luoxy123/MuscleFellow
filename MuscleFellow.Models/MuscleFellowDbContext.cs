@@ -11,7 +11,11 @@ namespace MuscleFellow.Data
         public MuscleFellowDbContext(DbContextOptions options) : 
             base(options)
         {
+                
         }
+            
+        
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             // Create Models
