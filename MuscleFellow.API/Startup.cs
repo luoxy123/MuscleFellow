@@ -45,7 +45,7 @@ namespace MuscleFellow.API
             // 读取appSettings.json 的配置信息
             services.Configure<WebApiSettings>(settings => settings.HostName = Configuration["HostName"]);
             services.Configure<WebApiSettings>(settings => settings.SecretKey = Configuration["SecretKey"]);
-
+            services.Configure<WebApiSettings>(settings => settings.ServiceUrl = Configuration["ServiceUrl"]);
             services.Configure<IdentityOptions>(options =>
             {
                 options.Password.RequireDigit = true;

@@ -12,3 +12,6 @@ MuscleFellow.Data/obj/
 MuscleFellow.Data/bin/
 MuscleFellow.Web/obj/
 MuscleFellow.API/obj/
+packages/
+Sylvanas/bin/
+Sylvanas/obj/

@@ -10,5 +10,8 @@ namespace MuscleFellow.API
         public string HostName { get; set; }
 
         public string SecretKey { get; set; }
+
+        public string ServiceUrl { get; set; }
+
     }
 }

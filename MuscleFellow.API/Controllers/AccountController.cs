@@ -1,35 +1,30 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
+using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using MuscleFellow.Data.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using MuscleFellow.Models;
+using Microsoft.AspNetCore.Hosting.Internal;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using MuscleFellow.API.Utils;
-using MuscleFellow.API.Models;
-using Microsoft.AspNetCore.Authentication;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Http.Authentication;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using MuscleFellow.API.JWT;
-using Microsoft.Extensions.Options;
-using System.Text;
+using MuscleFellow.API.Models;
+using MuscleFellow.Data.Interfaces;
+using MuscleFellow.Models;
 
 namespace MuscleFellow.API.Controllers
 {
     [Route("api/v1/[controller]/[action]")]
     public class AccountController : Controller
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ICartItemRepository _cartItemRepository;
         private readonly ILogger _logger;
-        IOptions<WebApiSettings> _settings;
-
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IOptions<WebApiSettings> _settings;
+        
         public AccountController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
@@ -43,7 +38,7 @@ namespace MuscleFellow.API.Controllers
             _logger = loggerFactory.CreateLogger<AccountController>();
             _settings = settings;
         }
-            
+
 
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] string id)
@@ -51,9 +46,10 @@ namespace MuscleFellow.API.Controllers
             if (string.IsNullOrWhiteSpace(id))
                 return Ok();
             var user = await _userManager.FindByEmailAsync(id);
-            JsonResult result = new JsonResult(user);
+            var result = new JsonResult(user);
             return result;
         }
+
         // POST: /Account/Register
         [HttpPost]
         [AllowAnonymous]
@@ -65,11 +61,10 @@ namespace MuscleFellow.API.Controllers
                 var result = await _userManager.CreateAsync(user, registerModel.Password);
                 if (result.Succeeded)
                 {
-                    await _signInManager.SignInAsync(user, isPersistent: false);
+                    await _signInManager.SignInAsync(user, false);
                     _logger.LogInformation(3, "User created a new account with password.");
                     return Ok();
                 }
-
             }
             catch (Exception e)
             {
@@ -78,7 +73,6 @@ namespace MuscleFellow.API.Controllers
             return Ok();
 
             // If we got this far, something failed.
-
         }
 
         // POST: /Account/Login
@@ -87,7 +81,7 @@ namespace MuscleFellow.API.Controllers
         public async Task<IActionResult> Login([FromBody] LoginAPIModel loginModel)
         {
             var result = await _signInManager.PasswordSignInAsync(
-                    loginModel.UserID, loginModel.Password, true, false);
+                loginModel.UserID, loginModel.Password, true, false);
             if (result.Succeeded)
             {
                 await HttpContext.Authentication.SignInAsync("Cookie", User);
@@ -97,14 +91,13 @@ namespace MuscleFellow.API.Controllers
                 {
                     Audience = "MuscleFellowAudience",
                     Issuer = "MuscleFellow",
-                    SigningCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256),
+                    SigningCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256)
                 };
-                TokenProvider tpm = new TokenProvider(options);
-                TokenEntity token = await tpm.GenerateToken(HttpContext, loginModel.UserID, loginModel.Password);
-                if(null != token)
+                var tpm = new TokenProvider(options);
+                var token = await tpm.GenerateToken(HttpContext, loginModel.UserID, loginModel.Password);
+                if (null != token)
                     return new JsonResult(token);
-                else
-                     return NotFound();
+                return NotFound();
             }
 
             if (result.IsLockedOut)
@@ -112,12 +105,10 @@ namespace MuscleFellow.API.Controllers
                 _logger.LogWarning(2, "User account locked out.");
                 return Ok("Lockout");
             }
-            else
-            {
-                _logger.LogWarning(2, "Invalid login attempt.");
-                return Ok("Invalid login attempt.");
-            }
+            _logger.LogWarning(2, "Invalid login attempt.");
+            return Ok("Invalid login attempt.");
         }
+
         // POST: /Account/LogOff
         [HttpPost]
         [Authorize(ActiveAuthenticationSchemes = "Bearer")]

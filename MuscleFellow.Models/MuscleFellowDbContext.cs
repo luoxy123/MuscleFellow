@@ -28,7 +28,6 @@ namespace MuscleFellow.Data
             builder.Entity<CartItem>().HasKey(c => c.CartID);
             builder.Entity<ApplicationUser>().HasKey(u => u.Id);
             builder.Entity<ProductImage>().HasKey(p => p.ImageID);
-            
             base.OnModelCreating(builder);
         }
 
