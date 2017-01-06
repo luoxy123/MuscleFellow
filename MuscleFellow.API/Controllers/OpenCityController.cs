@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -42,8 +43,10 @@ namespace MuscleFellow.API.Controllers
 
         [HttpGet]
         [Route("open")]
+        [Authorize(ActiveAuthenticationSchemes = "Bearer")]
         public async Task<IActionResult> Get()
         {
+                
                 try
                 {
                     _client.BaseUri = $"{_settings.Value.ServiceUrl}/basics";

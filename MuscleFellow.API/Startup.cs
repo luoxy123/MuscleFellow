@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -17,6 +18,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using MuscleFellow.API.JWT;
 using Microsoft.Extensions.Options;
@@ -124,6 +126,7 @@ namespace MuscleFellow.API
                 AuthenticationScheme="Cookie",
                 AutomaticAuthenticate = false,
                 LoginPath = new PathString("/api/v1/Account/Login")
+                
 
             });
 
@@ -147,15 +150,17 @@ namespace MuscleFellow.API
                 ClockSkew = TimeSpan.Zero
             };
 
+
             app.UseJwtBearerAuthentication(new JwtBearerOptions
             {
                 AuthenticationScheme = "Bearer",
                 AutomaticAuthenticate = false,
                 AutomaticChallenge = false,
                 TokenValidationParameters = tokenValidationParameters,
-                
-                
+                IncludeErrorDetails=true
             });
+
+            
 
             app.UseMvc(routes =>
             {
