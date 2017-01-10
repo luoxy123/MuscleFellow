@@ -84,8 +84,8 @@ namespace MuscleFellow.API.Controllers
                 loginModel.UserID, loginModel.Password, true, false);
             if (result.Succeeded)
             {
-                await HttpContext.Authentication.SignInAsync("Cookie", User);
-                _logger.LogInformation(1, "User logged in.");
+                //await HttpContext.Authentication.SignInAsync("Cookie", User);
+                //_logger.LogInformation(1, "User logged in.");
                 var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_settings.Value.SecretKey));
                 var options = new TokenProviderOptions
                 {
