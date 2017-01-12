@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,9 +22,13 @@ namespace MuscleFellow.API.Controllers
         // GET api/values/5
         [HttpGet("{id}")]
         [Authorize(ActiveAuthenticationSchemes = "Bearer")]
-        public string Get(int id)
+        public IActionResult Get(int id)
         {
-            return "value";
+
+            var identity = User.Identity as ClaimsIdentity;
+            var name = identity.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
+            return Ok(name);
+            //return "value";
         }
 
         // POST api/values

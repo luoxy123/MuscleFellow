@@ -90,7 +90,7 @@ namespace MuscleFellow.API.Controllers
                 var options = new TokenProviderOptions
                 {
                     Audience = "MuscleFellowAudience",
-                    Issuer = "MuscleFellow",
+                    Issuer = "MuscleFellow",    
                     SigningCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256)
                 };
                 var tpm = new TokenProvider(options);

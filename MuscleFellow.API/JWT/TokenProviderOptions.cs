@@ -8,7 +8,7 @@ namespace MuscleFellow.API.JWT
         public string Path { get; set; } = "/api/v1/Account/Login";
         public string Issuer { get; set; }
         public string Audience { get; set; }
-        public TimeSpan Expiration { get; set; } = TimeSpan.FromMinutes(500);
+        public TimeSpan Expiration { get; set; } = TimeSpan.FromMinutes(30);
         public SigningCredentials SigningCredentials { get; set; }
     }
 }

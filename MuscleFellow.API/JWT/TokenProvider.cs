@@ -32,7 +32,9 @@ namespace MuscleFellow.API.JWT
             {
                 new Claim(JwtRegisteredClaimNames.Sub, userName),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Iat, ToUnixEpochDate(now).ToString(), ClaimValueTypes.Integer64)
+                new Claim(JwtRegisteredClaimNames.Iat, ToUnixEpochDate(now).ToString(), ClaimValueTypes.Integer64),
+                new Claim(JwtRegisteredClaimNames.Exp,_options.Expiration.ToString())
+                
             };
 
             // Create the JWT and write it to a string

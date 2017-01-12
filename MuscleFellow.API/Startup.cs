@@ -17,6 +17,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using MuscleFellow.API.JWT;
 using Microsoft.Extensions.Options;
@@ -53,7 +56,7 @@ namespace MuscleFellow.API
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
                 options.Password.RequireLowercase = false;
-                
+
                 // Lockout settings
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
                 options.Lockout.MaxFailedAccessAttempts = 10;
@@ -62,15 +65,16 @@ namespace MuscleFellow.API
                 options.Cookies.ApplicationCookie.ExpireTimeSpan = TimeSpan.FromDays(150);
                 //options.Cookies.ApplicationCookie.LoginPath = "/Account/LogIn";
                 //options.Cookies.ApplicationCookie.LogoutPath = "/Account/LogOff";
-                                // User settings
+                // User settings
                 options.User.RequireUniqueEmail = true;
-                
+
             });
 
 
 
             services.AddEntityFramework()
-                .AddDbContext<MuscleFellowDbContext>(options=>options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+                .AddDbContext<MuscleFellowDbContext>(
+                    options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
 
 
@@ -84,11 +88,8 @@ namespace MuscleFellow.API
 
             // Add framework services.
             services.AddMvc();
-
             // Add session
             services.AddSession(options => options.IdleTimeout = TimeSpan.FromMinutes(20));
-            
-            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -116,15 +117,14 @@ namespace MuscleFellow.API
             //        AutomaticAuthenticate = false
             //        //AccessDeniedPath = new PathString("/api/v1/Account/Login"),
             //        //LoginPath = new PathString("/api/v1/Account/Login")
-                    
+                        
             //    });
 
             app.UseIdentity().UseCookieAuthentication(new CookieAuthenticationOptions()
             {
                 AuthenticationScheme="Cookie",
                 AutomaticAuthenticate = false,
-                LoginPath = new PathString("/api/v1/Account/Login")
-
+                LoginPath = new PathString("/api/v1/Account/Login"),
             });
 
             // Add JWT　Protection
@@ -153,7 +153,6 @@ namespace MuscleFellow.API
                 AutomaticAuthenticate = false,
                 AutomaticChallenge = false,
                 TokenValidationParameters = tokenValidationParameters,
-                
                 
             });
 
