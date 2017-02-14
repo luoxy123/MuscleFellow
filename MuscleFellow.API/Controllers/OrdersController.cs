@@ -72,6 +72,7 @@ namespace MuscleFellow.API.Controllers
                 Quantity = model.Amount,
                 SubTotal = product.UnitPrice * model.Amount
             };
+            
             order.TotalPrice = orderDetail.SubTotal;
 
             Guid orderID = await _orderRepository.AddAsync(order);

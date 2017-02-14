@@ -34,13 +34,18 @@ namespace MuscleFellow.Data.Repositories
         }
         public async Task<IEnumerable<OrderDetail>> GetOrderDetailsAsync(Guid orderID, int pageSize, int pageCount)
         {
-            var results = await _dbContext.OrderDetails.Where(o => o.OrderID == orderID)
-                               .Select(o => new { Order = o, })
-                               .OrderByDescending(o => o.Order.PlaceDate)
-                               .Skip(pageSize * pageCount)
-                               .Take(pageSize)
-                               .ToListAsync();
-            return results.Select(o => o.Order);
+            //var results = await _dbContext.OrderDetails.Where(o => o.OrderID == orderID)
+            //                   .Select(o => new { Order = o, })
+            //                   .OrderByDescending(o => o.Order.PlaceDate)
+            //                   .Skip(pageSize * pageCount)
+            //                   .Take(pageSize)
+            //                   .ToListAsync();
+           // return results.Select(o => o.Order);
+            var results1 = await _dbContext.OrderDetails.Where(o => o.OrderID == orderID)
+                .OrderByDescending(o=>o.PlaceDate)
+                .Skip(pageSize*pageCount).Take(pageSize)
+                .ToListAsync();
+            return results1;
         }
         public async Task<int> UpdateAsync(OrderDetail orderDetail)
         {
