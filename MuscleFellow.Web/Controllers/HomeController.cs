@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using Microsoft.AspNetCore.Mvc;
 using MuscleFellow.Data;
 using MuscleFellow.Data.Interfaces;
 using MuscleFellow.Web.Models.Home;
@@ -23,6 +24,7 @@ namespace MuscleFellow.Web.Controllers
         }
         public async Task<IActionResult> Index()
         {
+            var envrionment = Environment.MachineName.ToString();
             if (!HttpContext.Session.Keys.Contains("UserSession"))
             {
                 HttpContext.Session.Set("UserSession",

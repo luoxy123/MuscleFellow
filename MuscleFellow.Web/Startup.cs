@@ -45,6 +45,7 @@ namespace MuscleFellow.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            
             // Dependencies Injection
             AddDependencies(services);
 
@@ -55,10 +56,10 @@ namespace MuscleFellow.Web
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<MuscleFellowDbContext>()
                 .AddDefaultTokenProviders();
-            
+            ServiceCollection conn = new ServiceCollection();
+            var provider= services.BuildServiceProvider();
             services.AddMvc();
-
-            // Add session
+           // Add session
             services.AddSession(options => options.IdleTimeout = TimeSpan.FromMinutes(20));
 
             // Add application services.

@@ -8,7 +8,7 @@ namespace MuscleFellow.Data.Interfaces
 {
     public interface IBrandRepository
     {
-        Task<int> AddAsync(Brand brand);
+         Task<int> AddAsync(Brand brand);
         Task DeleteAsync(int brandID);
         Task<Brand> GetAsync(int brandID);
         Task<List<Brand>> GetAllAsync();

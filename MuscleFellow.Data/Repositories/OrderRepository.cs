@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using MuscleFellow.Models;
 using MuscleFellow.Data.Interfaces;
@@ -23,6 +24,8 @@ namespace MuscleFellow.Data.Repositories
             _dbContext.Orders.Add(order);
             await _dbContext.SaveChangesAsync();
             return order.OrderID;
+
+            
         }
 
         public async Task<Guid> DeleteAsync(Guid orderID)

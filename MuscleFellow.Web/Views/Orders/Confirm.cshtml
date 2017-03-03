@@ -37,7 +37,7 @@
                 <tbody>
                     @if (null != Model)
                     {
-                        @foreach (var item in Model.OrderDetails)
+                        foreach (var item in Model.OrderDetails)
                         {
                             <tr>
                                 <td>
@@ -55,6 +55,7 @@
                                 </td>
                             </tr>
                         }
+                        
                     }
                 </tbody>
             </table>
